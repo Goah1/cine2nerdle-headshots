@@ -1,0 +1,28 @@
+{
+	"manifest_version": 2,
+	"name": "C2N Actor Headshots",
+	"version": "1.0",
+
+	"icons": {
+		"48": "icons/icon.png"
+	},
+
+	"permissions": ["https://api.themoviedb.org/*", "https://image.tmdb.org/*"],
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": false
+	},
+
+	"browser_action": {
+		"default_icon": "icons/icon.png",
+		"default_title": "Cine2nerdle",
+		"default_popup": "popup/select_board.html"
+	},
+
+	"content_scripts": [
+		{
+			"matches": ["*://*.cinenerdle2.app/*"],
+			"js": ["config.js", "content_scripts/testingDOM.js"]
+		}
+	]
+}
