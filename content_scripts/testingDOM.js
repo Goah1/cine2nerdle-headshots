@@ -36,16 +36,13 @@ document.body.appendChild(wrapper);
 
 // Watches for changes to the DOM
 const observer = new MutationObserver(async mutations => {
-	console.log('Page content changed!');
 	const currentRoundDiv = getCurrentRound();
-	if (currentRoundDiv === null) {
-		// console.log('SAME ROUND');
-		return;
-	}
-	const actorArr = getLinkActors(currentRoundDiv);
-	const headshotArr = await fetchMultipleActorHeadshots(actorArr);
-	clearHeadshots();
-	createHeadshotElements(headshotArr);
+	if (currentRoundDiv === null) return;
+	const actorLinkElement = getLinkElements(currentRoundDiv);
+	// const actorArr = getLinkActors(currentRoundDiv);
+	// const headshotArr = await fetchMultipleActorHeadshots(actorArr);
+	// clearHeadshots();
+	// createHeadshotElements(headshotArr);
 });
 
 observer.observe(document.body, {
@@ -66,25 +63,41 @@ function getCurrentRound() {
 		'.inter.left-\\[10px\\].top-\\[-21px\\].mb-\\[2px\\].w-\\[95\\%\\].text-\\[10px\\].text-lightGrayText\\/75'
 	);
 
-	console.log('ROUND: ', roundDiv);
+	// console.log('ROUND: ', roundDiv);
 
 	const roundText = roundDiv.textContent;
 
 	if (roundText > currentRound) {
 		currentRound = roundText;
-		console.log('NEW ROUND: ', roundText);
+		// console.log('NEW ROUND: ', roundText);
 		return currentRoundDiv;
 	} else {
 		return null;
 	}
 }
 
-function getLinkActors(currentRound) {
-	const actorLinks = currentRound.querySelectorAll(
+function getLinkElements(currentRoundDiv) {
+	const linkWrapperElement = currentRoundDiv.querySelector(
+		'.absolute.left-1\\/2.top-1\\/2.-translate-x-1\\/2.-translate-y-1\\/2'
+	);
+
+	// console.log('LINK WRAPPER: ', linkWrapperElement);
+
+	const links = linkWrapperElement.querySelectorAll('.mb-\\[3px\\]');
+
+	// console.log('LINK ELEMENTS: ', links);
+
+	// linkElement.replaceWith(testDiv);
+
+	return links;
+}
+
+function getLinkActors(currentRoundDiv) {
+	const actorLinks = currentRoundDiv.querySelectorAll(
 		'.animate-link-films .oswald .text-white'
 	);
 
-	// console.log(actorLinks);
+	console.log(actorLinks);
 
 	const actorArr = [];
 
@@ -103,7 +116,7 @@ async function fetchMultipleActorHeadshots(actorArr) {
 		return [];
 	}
 
-	if (actorArr[0] === 'ESCAPE') {
+	if (actorArr[0] === 'ESCAPE' || actorArr[0] === 'SKIP') {
 		return [];
 	}
 
