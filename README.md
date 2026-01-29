@@ -1,4 +1,5 @@
-# chat-blocker
+# CINE2NERDLE HEADSHOTS
 
-Extension to block on-screen twitch chat
+Firefox browser extension that displays the headshots of the link actors
+
 # cine2nerdle-headshots
