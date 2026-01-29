@@ -6,13 +6,19 @@ let headshotElementArr = [];
 
 // Watches for changes to the DOM
 const observer = new MutationObserver(async mutations => {
+	console.log('CURRENT ROUND: ', currentRound);
 	const currentRoundDiv = getCurrentRound();
 	if (currentRoundDiv === null) return;
-	// const actorLinkElement = getLinkElements(currentRoundDiv);
+
 	const actorArr = getLinkActors(currentRoundDiv);
+	if (!actorArr || actorArr.length === 0) return;
+
+	if (actorArr.length >= 4) {
+		increaseLinkHeight();
+	}
+
 	const headshotArr = await fetchMultipleActorHeadshots(actorArr);
-	// clearHeadshots();
-	createHeadshotElements(headshotArr, actorArr);
+	createHeadshotElements(actorArr, headshotArr);
 });
 
 observer.observe(document.body, {
@@ -20,10 +26,21 @@ observer.observe(document.body, {
 	subtree: true,
 });
 
+function increaseLinkHeight() {
+	const linkWrapper = document.querySelector(
+		'.custom-scrollbar.max-h-\\[100px\\].overflow-y-auto.overflow-x-hidden.pr-\\[5px\\]'
+	);
+	linkWrapper.style.cssText = `max-height: 175px`;
+}
+
 function getCurrentRound() {
 	// LATEST ROUND WRAPPER
+	// const currentRoundDiv = document.querySelector(
+	// 	'#battle-board .flex.w-full.flex-col.items-center .mx-auto .relative.flex.w-full.flex-col'
+	// );
+
 	const currentRoundDiv = document.querySelector(
-		'#battle-board .flex.w-full.flex-col.items-center .mx-auto .relative.flex.w-full.flex-col'
+		'.mx-auto .flex.w-full.flex-col.items-center .relative.flex.w-full.max-w-\\[350px\\].flex-col.s500\\:w-\\[350px\\].laptop\\:w-\\[400px\\].laptop\\:max-w-\\[400px\\]'
 	);
 
 	// console.log('CURRENT ROUND: ', currentRoundDiv);
@@ -46,62 +63,41 @@ function getCurrentRound() {
 	}
 }
 
-function getLinkElements(currentRoundDiv) {
-	const linkWrapperElement = currentRoundDiv.querySelector(
-		'.absolute.left-1\\/2.top-1\\/2.-translate-x-1\\/2.-translate-y-1\\/2'
-	);
-
-	// console.log('LINK WRAPPER: ', linkWrapperElement);
-
-	const links = linkWrapperElement.querySelectorAll('.mb-\\[3px\\]');
-
-	console.log('LINK ELEMENTS: ', links);
-
-	return links;
-}
-
 function getLinkActors(currentRoundDiv) {
-	const actorLinks = currentRoundDiv.querySelectorAll(
+	const actorNameElements = currentRoundDiv.querySelectorAll(
 		'.animate-link-films .oswald .text-white'
 	);
 
-	console.log(actorLinks);
+	// console.log(actorNameElements);
 
 	const actorArr = [];
 
-	actorLinks.forEach(link => {
-		actorArr.push({ name: link.innerText, element: link });
+	actorNameElements.forEach(actorName => {
+		actorArr.push({ name: actorName.innerText, element: actorName });
 	});
 
-	// console.log(actorArr.slice(0, 4));
+	// console.log(actorArr.slice(0, 5));
 
 	return actorArr.slice(0, 5);
 }
 
 async function fetchMultipleActorHeadshots(actorArr) {
-	if (!actorArr || actorArr.length === 0) {
-		// console.log('ACTOR ARRAY IS EMPTY');
-		return [];
-	}
-
 	if (actorArr[0].name === 'ESCAPE' || actorArr[0].name === 'SKIP') {
 		return [];
 	}
 
-	console.log('ACTOR ARRAY IS OKAY: ', actorArr);
+	// console.log('ACTOR ARRAY IS OKAY: ', actorArr);
 
 	const promises = actorArr.map(actor =>
 		browser.runtime
 			.sendMessage({
 				action: 'fetchActorHeadshot',
 				name: actor.name,
-				linkElement: actor.element,
 				apiKey: API_KEY,
 			})
 			.catch(error => ({
 				name: actor.name,
 				imageUrl: null,
-				linkElement: null,
 				error: error.message,
 			}))
 	);
@@ -111,24 +107,25 @@ async function fetchMultipleActorHeadshots(actorArr) {
 	return results;
 }
 
-function createHeadshotElements(linkDataArr) {
-	if (!linkDataArr || linkDataArr.length === 0) return;
-
-	linkDataArr.forEach(link => {
-		// CREATE THE WRAPPER
+function createHeadshotElements(actorArr, headshotArr) {
+	headshotArr.forEach((headshot, index) => {
+		// CREATE THE HEADSHOT WRAPPER
 		const headshotWrapper = document.createElement('div');
+		// 225 is the max height of the link space
 		headshotWrapper.style.cssText = `
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			position: relative;
-			height: 100px;
+			height: ${headshotArr.length === 3 ? 200 / 3 : 90}px;
 			width: auto;
+			border-radius: 5px;
 			overflow: hidden;
+			margin-left: 10px;
 		`;
 
 		const headshotImg = document.createElement('img');
-		headshotImg.src = link.imageUrl;
+		headshotImg.src = headshot.imageUrl;
 		headshotImg.style.cssText = `
 			position: relative;
 			height: 100%;
@@ -136,21 +133,21 @@ function createHeadshotElements(linkDataArr) {
 		`;
 
 		const headshotText = document.createElement('div');
-		headshotText.textContent = link.name;
+		headshotText.textContent = headshot.name;
 		headshotText.style.cssText = `
 			z-index: 3;
 			position: absolute;
 			width: 100%;
+			height: auto;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			height: 18%;
 			bottom: 0;
 			left: 50%;
 			transform: translateX(-50%);
 			background-color: rgba(28, 28, 28, 0.9);
 			color: white;
-			font-size: 0.8em;
+			font-size: ${headshotArr.length === 3 ? 0.55 : 0.7}em;
 			text-align: center;
 			font-family: Oswald;
 		`;
@@ -159,18 +156,8 @@ function createHeadshotElements(linkDataArr) {
 
 		headshotWrapper.appendChild(headshotText);
 
-		link.nameElement.replaceWith(headshotWrapper);
+		actorArr[index].element.replaceWith(headshotWrapper);
 
 		// wrapper.appendChild(headshotWrapper);
-
-		headshotElementArr.push(headshotWrapper);
 	});
-	console.log('HEADSHOTS CREATED');
-}
-
-function clearHeadshots() {
-	headshotElementArr.forEach(headshot => {
-		headshot.remove();
-	});
-	headshotElementArr = [];
 }
