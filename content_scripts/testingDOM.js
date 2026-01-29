@@ -55,24 +55,28 @@ observer.observe(document.body, {
 
 function getCurrentRound() {
 	// LATEST ROUND WRAPPER
+	// const currentRoundDiv = document.querySelector(
+	// 	'#battle-board .flex.w-full.flex-col.items-center .mx-auto .relative.flex.w-full.flex-col'
+	// );
+
 	const currentRoundDiv = document.querySelector(
-		'#battle-board .flex.w-full.flex-col.items-center .mx-auto .relative.flex.w-full.flex-col'
+		'.mx-auto .flex.w-full.flex-col.items-center .relative.flex.w-full.max-w-\\[350px\\].flex-col.s500\\:w-\\[350px\\].laptop\\:w-\\[400px\\].laptop\\:max-w-\\[400px\\]'
 	);
 
-	console.log('CURRENT ROUND: ', currentRoundDiv);
+	// console.log('CURRENT ROUND: ', currentRoundDiv);
 
 	// ROUND TEXT DIV
 	const roundDiv = currentRoundDiv.querySelector(
 		'.inter.left-\\[10px\\].top-\\[-21px\\].mb-\\[2px\\].w-\\[95\\%\\].text-\\[10px\\].text-lightGrayText\\/75'
 	);
 
-	console.log('ROUND: ', roundDiv);
+	// console.log('ROUND: ', roundDiv);
 
 	const roundText = roundDiv.textContent;
 
 	if (roundText > currentRound) {
 		currentRound = roundText;
-		console.log('NEW ROUND: ', roundText);
+		// console.log('NEW ROUND: ', roundText);
 		return currentRoundDiv;
 	} else {
 		return null;
