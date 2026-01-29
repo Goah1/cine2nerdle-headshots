@@ -2,47 +2,17 @@ const API_KEY = CONFIG.TMDB_KEY;
 
 let currentRound = '0';
 
-const singleHeadshotHeight = 24;
-
-let testingHeadshots = [
-	{
-		name: 'JARED',
-		imageUrl: 'https://image.tmdb.org/t/p/w500/qjhNKsw0OLyZQgK4srhelBafcCf.jpg',
-	},
-	{
-		name: 'NORB',
-		imageUrl: 'https://image.tmdb.org/t/p/w500/qjhNKsw0OLyZQgK4srhelBafcCf.jpg',
-	},
-];
-
 let headshotElementArr = [];
-
-// WRAPPER
-const wrapper = document.createElement('div');
-wrapper.style.cssText = `
-            z-index: 99999;
-			position: fixed;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: space-evenly;
-			top: 50%;
-			transform: translateY(-50%);
-			right: 10%;
-			height: ${testingHeadshots * singleHeadshotHeight}vh;
-			width: auto;
-`;
-document.body.appendChild(wrapper);
 
 // Watches for changes to the DOM
 const observer = new MutationObserver(async mutations => {
 	const currentRoundDiv = getCurrentRound();
 	if (currentRoundDiv === null) return;
-	const actorLinkElement = getLinkElements(currentRoundDiv);
-	// const actorArr = getLinkActors(currentRoundDiv);
-	// const headshotArr = await fetchMultipleActorHeadshots(actorArr);
+	// const actorLinkElement = getLinkElements(currentRoundDiv);
+	const actorArr = getLinkActors(currentRoundDiv);
+	const headshotArr = await fetchMultipleActorHeadshots(actorArr);
 	// clearHeadshots();
-	// createHeadshotElements(headshotArr);
+	createHeadshotElements(headshotArr, actorArr);
 });
 
 observer.observe(document.body, {
@@ -56,7 +26,7 @@ function getCurrentRound() {
 		'#battle-board .flex.w-full.flex-col.items-center .mx-auto .relative.flex.w-full.flex-col'
 	);
 
-	console.log('CURRENT ROUND: ', currentRoundDiv);
+	// console.log('CURRENT ROUND: ', currentRoundDiv);
 
 	// ROUND TEXT DIV
 	const roundDiv = currentRoundDiv.querySelector(
@@ -85,9 +55,7 @@ function getLinkElements(currentRoundDiv) {
 
 	const links = linkWrapperElement.querySelectorAll('.mb-\\[3px\\]');
 
-	// console.log('LINK ELEMENTS: ', links);
-
-	// linkElement.replaceWith(testDiv);
+	console.log('LINK ELEMENTS: ', links);
 
 	return links;
 }
@@ -102,12 +70,12 @@ function getLinkActors(currentRoundDiv) {
 	const actorArr = [];
 
 	actorLinks.forEach(link => {
-		actorArr.push(link.innerText);
+		actorArr.push({ name: link.innerText, element: link });
 	});
 
-	console.log(actorArr.slice(0, 4));
+	// console.log(actorArr.slice(0, 4));
 
-	return actorArr.slice(0, 4);
+	return actorArr.slice(0, 5);
 }
 
 async function fetchMultipleActorHeadshots(actorArr) {
@@ -116,40 +84,37 @@ async function fetchMultipleActorHeadshots(actorArr) {
 		return [];
 	}
 
-	if (actorArr[0] === 'ESCAPE' || actorArr[0] === 'SKIP') {
+	if (actorArr[0].name === 'ESCAPE' || actorArr[0].name === 'SKIP') {
 		return [];
 	}
 
 	console.log('ACTOR ARRAY IS OKAY: ', actorArr);
 
-	const promises = actorArr.map(name =>
+	const promises = actorArr.map(actor =>
 		browser.runtime
 			.sendMessage({
 				action: 'fetchActorHeadshot',
-				name: name,
+				name: actor.name,
+				linkElement: actor.element,
 				apiKey: API_KEY,
 			})
 			.catch(error => ({
-				name: name,
+				name: actor.name,
 				imageUrl: null,
+				linkElement: null,
 				error: error.message,
 			}))
 	);
 
 	const results = await Promise.all(promises);
-	console.log('Headshot results:', results);
+	// console.log('Headshot results:', results);
 	return results;
 }
 
-function createHeadshotElements(headshotArr) {
-	if (!headshotArr || headshotArr.length === 0) {
-		console.log('ACTOR ARRAY IS EMPTY OR NULL');
-		return;
-	} else {
-		console.log(headshotArr);
-	}
+function createHeadshotElements(linkDataArr) {
+	if (!linkDataArr || linkDataArr.length === 0) return;
 
-	headshotArr.forEach(headshot => {
+	linkDataArr.forEach(link => {
 		// CREATE THE WRAPPER
 		const headshotWrapper = document.createElement('div');
 		headshotWrapper.style.cssText = `
@@ -157,20 +122,13 @@ function createHeadshotElements(headshotArr) {
 			flex-direction: column;
 			align-items: center;
 			position: relative;
-			height: ${singleHeadshotHeight}vh;
+			height: 100px;
 			width: auto;
-			--tw-shadow: 0px 0px 8px 0px rgb(99,197,218);
-			--tw-shadow-colored: 0px 0px 8px 0px var(--tw-shadow-color);
-			box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow);
-			--tw-border-opacity: 1;
-			border: 2px solid rgb(99 197 218 / var(--tw-border-opacity));
-			border-radius: 10px;
 			overflow: hidden;
-			margin-bottom: 5px;
 		`;
 
 		const headshotImg = document.createElement('img');
-		headshotImg.src = headshot.imageUrl;
+		headshotImg.src = link.imageUrl;
 		headshotImg.style.cssText = `
 			position: relative;
 			height: 100%;
@@ -178,7 +136,7 @@ function createHeadshotElements(headshotArr) {
 		`;
 
 		const headshotText = document.createElement('div');
-		headshotText.textContent = headshot.name;
+		headshotText.textContent = link.name;
 		headshotText.style.cssText = `
 			z-index: 3;
 			position: absolute;
@@ -201,7 +159,9 @@ function createHeadshotElements(headshotArr) {
 
 		headshotWrapper.appendChild(headshotText);
 
-		wrapper.appendChild(headshotWrapper);
+		link.nameElement.replaceWith(headshotWrapper);
+
+		// wrapper.appendChild(headshotWrapper);
 
 		headshotElementArr.push(headshotWrapper);
 	});

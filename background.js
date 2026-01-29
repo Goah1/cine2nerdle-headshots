@@ -9,10 +9,12 @@ browser.runtime.onMessage.addListener((request, sender) => {
 				imageUrl: data.results?.[0]?.profile_path
 					? `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`
 					: null,
+				linkElement: request.linkElement,
 			}))
 			.catch(error => ({
 				name: request.name,
 				imageUrl: null,
+				linkElement: null,
 				error: error.message,
 			}));
 	}
