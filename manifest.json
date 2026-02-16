@@ -22,7 +22,8 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.cinenerdle2.app/*"],
-			"js": ["config.js", "content_scripts/testingDOM.js"]
+			"js": ["config.js", "content_scripts/testingDOM.js"],
+			"css": ["content_scripts/styles.css"]
 		}
 	]
 }

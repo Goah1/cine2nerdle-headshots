@@ -14,6 +14,10 @@ const MAX_HEADSHOT_ARRAY_LENGTH = 3;
 
 const MAX_LINK_AREA = 225;
 
+const DOM_ELEMENTS = {
+	gameBoard: '#battle-board',
+};
+
 // Watches for changes to the DOM
 const observer = new MutationObserver(async mutations => {
 	if (!isGameStarted()) return;
@@ -39,20 +43,7 @@ function isGameStarted() {
 	return document.querySelector('#battle-board');
 }
 
-function increaseBetweenRoundAreaHeight() {
-	const linkContainer = document.querySelector('.animate-link-films');
-	console.log('LINK CONTAINER: ', linkContainer);
-	linkContainer.style.cssText = `height: 315px;`;
-}
-
-function increaseLinkWrapperHeight() {
-	const linkWrapper = document.querySelector(
-		'.custom-scrollbar.max-h-\\[100px\\].overflow-y-auto.overflow-x-hidden.pr-\\[5px\\]'
-	);
-
-	linkWrapper.style.cssText = `max-height: ${LINK_WRAPPER_HEIGHT}px`;
-}
-
+// Adjusts the headshot heights based on how many headshots there are (NOT LINKS)
 function calculateHeadshotHeight(actorArrLength) {
 	if (actorArrLength === 1) {
 		HEADSHOT_HEIGHT = 130;
@@ -75,6 +66,7 @@ function calculateHeadshotHeight(actorArrLength) {
 	}
 }
 
+//
 function getCurrentRound() {
 	const currentRoundDiv = document.querySelector(
 		'.mx-auto .flex.w-full.flex-col.items-center .relative.flex.w-full.max-w-\\[350px\\].flex-col.s500\\:w-\\[350px\\].laptop\\:w-\\[400px\\].laptop\\:max-w-\\[400px\\]'
