@@ -131,4 +131,120 @@ async function fetchMultipleActorHeadshots(linkDataObj) {
 function createLinkElements(linkDataObj, headshotArr) {
 	console.log('linkDataObj: ', linkDataObj);
 	console.log('headshotArr: ', headshotArr);
+
+	const linkParentWrapper = document.createElement('div');
+	linkParentWrapper.classList.add('link-parent-wrapper');
+
+	linkDataObj.linkData.forEach((link, index) => {
+		const linkWrapper = document.createElement('div');
+		linkWrapper.classList.add('link-wrapper');
+
+		// NO BRANCH FOR THE LAST ONE IF THE ARR IS UNEVEN
+		if (
+			linkDataObj.linkData.length % 2 === 1 &&
+			linkDataObj.linkData.length === index + 1
+		) {
+			console.log('no branch');
+		} else {
+			const branch = document.createElement('div');
+			branch.classList.add(`${index % 2 === 0 ? 'right-branch' : 'left-branch'}`);
+			linkWrapper.appendChild(branch);
+		}
+
+		const xWrapper = document.createElement('div');
+		xWrapper.classList.add('x-wrapper');
+
+		for (let i = 0; i < link.xCount; i++) {
+			const x = document.createElement('div');
+			x.classList.add('x-used');
+			xWrapper.appendChild(x);
+		}
+
+		// Checks if the img is available;
+		if (headshotArr[index].imageUrl === null) {
+			const noImgAvailable = document.createElement('div');
+			noImgAvailable.classList.add('no-img-available');
+			linkWrapper.appendChild(noImgAvailable);
+		} else {
+			const headshotImg = document.createElement('img');
+			headshotImg.src = headshotArr[index].imageUrl;
+			headshotImg.classList.add(
+				`${link.xCount === 3 && 'dead-link'}`,
+				'headshot-img'
+			);
+			linkWrapper.appendChild(headshotImg);
+		}
+
+		const nameWrapper = document.createElement('div');
+		nameWrapper.classList.add('name-wrapper');
+
+		const name = document.createElement('div');
+		name.textContent = link.name;
+		name.classList.add('name');
+
+		nameWrapper.appendChild(name);
+
+		linkWrapper.appendChild(xWrapper);
+		linkWrapper.appendChild(nameWrapper);
+
+		linkParentWrapper.appendChild(linkWrapper);
+	});
+
+	linkDataObj.linksWrapper.replaceWith(linkParentWrapper);
 }
+
+// function createHeadshotElements(actorArr, headshotArr) {
+// 	headshotArr.forEach((headshot, index) => {
+// 		// CREATE THE HEADSHOT WRAPPER
+// 		const headshotWrapper = document.createElement('div');
+
+// 		// 225 is the max height of the link space
+// 		headshotWrapper.style.cssText = `
+// 			display: flex;
+// 			flex-direction: column;
+// 			align-items: center;
+// 			position: relative;
+// 			height: ${HEADSHOT_HEIGHT}px;
+// 			width: auto;
+// 			border-radius: 5px;
+// 			overflow: hidden;
+// 			margin-left: 10px;
+// 		`;
+
+// 		const headshotImg = document.createElement('img');
+// 		headshotImg.src = headshot.imageUrl;
+// 		headshotImg.style.cssText = `
+// 			position: relative;
+// 			height: 100%;
+// 			width: auto;
+// 		`;
+
+// 		const headshotText = document.createElement('div');
+// 		headshotText.textContent = headshot.name;
+// 		headshotText.style.cssText = `
+// 			z-index: 3;
+// 			position: absolute;
+// 			width: 100%;
+// 			height: auto;
+// 			display: flex;
+// 			align-items: center;
+// 			justify-content: center;
+// 			bottom: 0;
+// 			left: 50%;
+// 			transform: translateX(-50%);
+// 			background-color: rgba(28, 28, 28, 0.9);
+// 			color: white;
+// 			font-size: ${actorArr.length === 1 ? 0.9 : 0.7}em;
+// 			text-align: center;
+// 			font-family: Oswald;
+// 		`;
+
+// 		headshotWrapper.appendChild(headshotImg);
+
+// 		headshotWrapper.appendChild(headshotText);
+
+// 		actorArr[index].element.replaceWith(headshotWrapper);
+
+// 		// wrapper.appendChild(headshotWrapper);
+// 	});
+// }
