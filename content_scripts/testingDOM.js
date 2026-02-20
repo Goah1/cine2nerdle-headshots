@@ -83,10 +83,17 @@ function getLinkData(currentRoundDiv) {
 	const linkElements = linksWrapper.querySelectorAll('.mb-\\[3px\\]');
 
 	linkElements.forEach(link => {
-		const data = { name: '', xCount: 0 };
+		const data = { name: '', xCount: 0, linkIcon: null };
 
 		// Gets the used X elements
 		const xCountElements = link.querySelectorAll('.text-gradientYellow');
+
+		// Gets the link icon
+		const linkIcon = link.querySelector(
+			'.fa-solid.fa-link.mr-\\[5px\\].text-\\[13px\\].laptop\\:text-\\[14px\\]'
+		);
+
+		data.linkIcon = linkIcon;
 
 		data.xCount = xCountElements.length;
 
@@ -160,6 +167,13 @@ function createLinkElements(linkDataObj, headshotArr) {
 			xWrapper.appendChild(x);
 		}
 
+		const iconWrapper = document.createElement('div');
+		iconWrapper.classList.add('icon-wrapper');
+		link.linkIcon.classList.remove('mr-[5px]');
+		if (link.linkIcon) {
+			iconWrapper.appendChild(link.linkIcon);
+		}
+
 		// Checks if the img is available;
 		if (headshotArr[index].imageUrl === null) {
 			const noImgAvailable = document.createElement('div');
@@ -184,6 +198,7 @@ function createLinkElements(linkDataObj, headshotArr) {
 
 		nameWrapper.appendChild(name);
 
+		linkWrapper.appendChild(iconWrapper);
 		linkWrapper.appendChild(xWrapper);
 		linkWrapper.appendChild(nameWrapper);
 

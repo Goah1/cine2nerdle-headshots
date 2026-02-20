@@ -3,7 +3,7 @@
 	--secondary-color: #303030;
 	--border-radius: 9px;
 	--branch-color: #63c5da;
-	--font-size: 0.9em;
+	--font-size: 0.8em;
 }
 
 .link-parent-wrapper {
@@ -72,7 +72,7 @@
 
 .x-used {
 	position: relative;
-	width: 25%;
+	width: 22%;
 	height: 2px;
 }
 
@@ -94,6 +94,18 @@
 
 .x-used::after {
 	transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.icon-wrapper {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: var(--secondary-color);
+	border-radius: var(--border-radius) 0 var(--border-radius) 0;
+	padding: 4px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .headshot-img {
@@ -134,7 +146,7 @@
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	min-height: 20%;
+	min-height: 18%;
 	height: fit-content;
 	background-color: rgba(36, 36, 36, 0.8);
 	display: flex;
