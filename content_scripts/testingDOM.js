@@ -1,4 +1,4 @@
-const API_KEY = CONFIG.TMDB_KEY;
+const API_KEY = browser.storage.local.get('tmdbKey');
 
 const LINK_WRAPPER_HEIGHT = 200;
 
@@ -18,6 +18,8 @@ const MAX_LINK_AREA = 225;
 const observer = new MutationObserver(async mutations => {
 	if (!isGameStarted()) return;
 
+	fetchKey();
+
 	const currentRoundDiv = getCurrentRound();
 	if (currentRoundDiv === null) return;
 
@@ -33,6 +35,12 @@ observer.observe(document.body, {
 	childList: true,
 	subtree: true,
 });
+
+function fetchKey() {
+	browser.storage.local.get('tmdbKey').then(result => {
+		console.log(result.tmdbKey); // accessed by the same key name
+	});
+}
 
 // Checks to see if the game has started
 function isGameStarted() {

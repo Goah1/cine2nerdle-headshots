@@ -7,7 +7,11 @@
 		"48": "icons/icon.png"
 	},
 
-	"permissions": ["https://api.themoviedb.org/*", "https://image.tmdb.org/*"],
+	"permissions": [
+		"https://api.themoviedb.org/*",
+		"https://image.tmdb.org/*",
+		"storage"
+	],
 	"background": {
 		"scripts": ["background.js"],
 		"persistent": false
@@ -15,8 +19,8 @@
 
 	"browser_action": {
 		"default_icon": "icons/icon.png",
-		"default_title": "Cine2nerdle",
-		"default_popup": "popup/select_board.html"
+		"default_title": "Cine2Nerdle Headshots",
+		"default_popup": "popup/settings.html"
 	},
 
 	"content_scripts": [
