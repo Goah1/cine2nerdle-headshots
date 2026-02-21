@@ -1,6 +1,33 @@
 body {
-	background-color: blue;
+	background-color: #242424;
+	color: white;
 }
 
-#test-btn {
+.tmdb-key-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#key-status-wrapper {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-top: 5px;
+	/* background-color: blue; */
+}
+
+#key-status-indicator {
+	height: 1em;
+	width: 1em;
+	border-radius: 50%;
+	margin-left: 5px;
+}
+
+.good {
+	background-color: green;
+}
+
+.bad {
+	background-color: red;
 }

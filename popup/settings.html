@@ -10,14 +10,18 @@
 		<form id="settings-form">
 			<label for="tmdb-key">TMDB KEY</label>
 			<input
-				type="text"
+				type="password"
 				id="tmdb-key"
 				name="tmdb-key"
-				placeholder="Enter TMDB Key"
+				placeholder="Change TMDB Key"
 			/>
 			<button type="submit">Save</button>
 		</form>
 
+		<div id="key-status-wrapper">
+			<div id="key-status-text"></div>
+			<div id="key-status-indicator"></div>
+		</div>
 		<script src="settings.js"></script>
 	</body>
 </html>
