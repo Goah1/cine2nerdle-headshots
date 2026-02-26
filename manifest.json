@@ -7,6 +7,10 @@
 		"48": "icons/icon.png"
 	},
 
+	"data_collection_permissions": {
+		"collecting": false
+	},
+
 	"permissions": [
 		"https://api.themoviedb.org/*",
 		"https://image.tmdb.org/*",
@@ -26,7 +30,7 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.cinenerdle2.app/*"],
-			"js": ["config.js", "content_scripts/testingDOM.js"],
+			"js": ["content_scripts/testingDOM.js"],
 			"css": ["content_scripts/styles.css"]
 		}
 	]
